@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Mensual - VENEPAN</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar"></aside>
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="page-info">
+                <h2 id="tituloVista">Resumen Mensual de Producción</h2>
+                <span id="subtituloVista">Análisis comparativo entre meses</span>
+            </div>
+            <div class="top-icons">
+                <div class="menu-desplegable-container">
+                    <i class="fas fa-bars menu-hamburguesa" onclick="toggleMenu()"></i>
+                    <div class="menu-desplegable" id="menuDesplegable">
+                        <div class="menu-item" onclick="cambiarVista('mensual')"><i class="fas fa-calendar-alt"></i> Vista Mensual</div>
+                        <div class="menu-item" onclick="cambiarVista('semanal')"><i class="fas fa-calendar-week"></i> Vista Semanal</div>
+                        <div class="menu-item" onclick="cambiarVista('diaria')"><i class="fas fa-calendar-day"></i> Vista Diaria</div>
+                        <div class="menu-item" onclick="cambiarVista('anual')"><i class="fas fa-chart-line"></i> Vista Anual</div>
+                    </div>
+                </div>
+                <i class="fas fa-download"></i>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <!-- Pestañas de comparación (Mensual / Comparativa) -->
+        <div class="tabs-comparacion">
+            <button class="tab-btn active" onclick="cambiarTab('mensual')"><i class="fas fa-chart-bar"></i> Vista Mensual</button>
+            <button class="tab-btn" onclick="cambiarTab('comparativa')"><i class="fas fa-chart-line"></i> Comparativa Mes a Mes</button>
+        </div>
+
+        <!-- VISTA MENSUAL (con botones para elegir tipo de gráfico) -->
+        <div id="tabMensual" class="tab-content active">
+            <!-- Tarjetas de estadísticas -->
+            <div class="stats-grid">
+                <div class="stat-card red">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-data"><h3 id="dias-registrados">0</h3><p>Días con Actividad</p></div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-icon"><i class="fas fa-weight-hanging"></i></div>
+                    <div class="stat-data"><h3 id="total-kilos">0.00 kg</h3><p>Producción Total</p></div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-data"><h3 id="rendimiento-promedio">0%</h3><p>Rendimiento Promedio</p></div>
+                </div>
+            </div>
+
+            <!-- Botones para elegir qué gráficos mostrar -->
+            <div class="selector-tipo-grafico">
+                <button class="btn-tipo-grafico active" data-tipo="pan" onclick="cambiarTipoGrafico('pan')">
+                    <i class="fas fa-bread-slice"></i> Panificación
+                </button>
+                <button class="btn-tipo-grafico" data-tipo="cereales" onclick="cambiarTipoGrafico('cereales')">
+                    <i class="fas fa-seedling"></i> Cereales
+                </button>
+                <button class="btn-tipo-grafico" data-tipo="soya" onclick="cambiarTipoGrafico('soya')">
+                    <i class="fas fa-leaf"></i> Soya
+                </button>
+            </div>
+
+            <!-- Layout de tablas y gráficos -->
+            <div class="dashboard-layout">
+                <div class="resumen-table-section">
+                    <div id="resumen"></div>
+                    <div id="resumen-cereales"></div>
+                    <div id="resumen-soya"></div>
+                </div>
+                <div class="graficos-section">
+                    <!-- Gráfico 1 -->
+                    <div class="grafico-card">
+                        <div class="grafico-header">
+                            <i class="fas fa-chart-bar"></i>
+                            <div>
+                                <h4 id="grafico1-titulo">Comparativa por Producto</h4>
+                                <p id="grafico1-subtitulo">Planificación vs Producción Real (Kg)</p>
+                            </div>
+                        </div>
+                        <div class="chart-container"><canvas id="comparativaChart"></canvas></div>
+                        <!-- Stats para Panificación -->
+                        <div class="stats-mini" id="stats-mini-pan">
+                            <div class="stats-mini-item"><div class="label">Planificación Total</div><div class="value" id="planificacion-total-kg">0 kg</div></div>
+                            <div class="stats-mini-item"><div class="label">Producción Total</div><div class="value" id="produccion-total-kg">0 kg</div></div>
+                            <div class="stats-mini-item"><div class="label">Diferencia</div><div class="value" id="diferencia-total">0 kg</div></div>
+                        </div>
+                        <!-- Stats para Cereales -->
+                        <div class="stats-mini" id="stats-mini-cereales" style="display:none;">
+                            <div class="stats-mini-item"><div class="label">Total Producido</div><div class="value" id="cereales-total-kg">0 kg</div></div>
+                            <div class="stats-mini-item"><div class="label">Merma Total</div><div class="value" id="cereales-merma-kg">0 kg</div></div>
+                            <div class="stats-mini-item"><div class="label">Rendimiento Promedio</div><div class="value" id="cereales-rendimiento">0%</div></div>
+                        </div>
+                        <!-- Stats para Soya -->
+                        <div class="stats-mini" id="stats-mini-soya" style="display:none;">
+                            <div class="stats-mini-item"><div class="label">Total Producido</div><div class="value" id="soya-total-kg">0 kg</div></div>
+                            <div class="stats-mini-item"><div class="label">Primera Calidad</div><div class="value" id="soya-primera-kg">0 kg</div></div>
+                            <div class="stats-mini-item"><div class="label">Rendimiento</div><div class="value" id="soya-rendimiento">0%</div></div>
+                        </div>
+                    </div>
+                    <!-- Gráfico 2 -->
+                    <div class="grafico-card">
+                        <div class="grafico-header">
+                            <i class="fas fa-chart-pie"></i>
+                            <div><h4 id="grafico2-titulo">Rendimiento por Producto</h4><p id="grafico2-subtitulo">Porcentaje de eficiencia (%)</p></div>
+                        </div>
+                        <div class="chart-container"><canvas id="rendimientoChart"></canvas></div>
+                        <div class="leyenda-rendimiento" id="leyenda-rendimiento"></div>
+                        <div id="rendimiento-general" class="rendimiento-badge">Rendimiento General: --%</div>
+                    </div>
+                    <!-- Gráfico 3 -->
+                    <div class="grafico-card">
+                        <div class="grafico-header">
+                            <i class="fas fa-trash-alt"></i>
+                            <div><h4 id="grafico3-titulo">Merma por Producto</h4><p id="grafico3-subtitulo">Pérdidas en kilogramos</p></div>
+                        </div>
+                        <div class="chart-container"><canvas id="mermaChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- ===== CONTENIDO DE COMPARATIVA MES A MES ===== -->
+            <div id="tabComparativa" class="tab-content">
+                <div class="comparador-meses" style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; color: var(--venepan-red);">
+                        <i class="fas fa-chart-line"></i> Comparación de Producción entre Meses
+                    </h3>
+                    <div class="selector-meses">
+                        <div class="selector-grupo">
+                            <label><i class="fas fa-calendar-alt"></i> Mes Base</label>
+                            <select id="mesBase">
+                                <option value="">Seleccionar mes</option>
+                            </select>
+                        </div>
+                        <div class="selector-grupo">
+                            <label><i class="fas fa-calendar-alt"></i> Mes Comparación</label>
+                            <select id="mesComparacion">
+                                <option value="">Seleccionar mes</option>
+                            </select>
+                        </div>
+                        <button class="btn-comparar" onclick="compararMeses()">
+                            <i class="fas fa-chart-simple"></i> Comparar
+                        </button>
+                        <button class="btn-comparar" onclick="verMesActual()" style="background: #3498db;">
+                            <i class="fas fa-calendar-day"></i> Mes Actual
+                        </button>
+                    </div>
+                    <div id="comparacionResumen" style="display: none;"></div>
+                </div>
+
+                <div class="dashboard-layout">
+                    <div class="resumen-table-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-table"></i> Detalle por Producto</h3>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table style="width:100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th id="thMes1">Mes 1 (Kg)</th>
+                                            <th id="thMes2">Mes 2 (Kg)</th>
+                                            <th>Diferencia (Kg)</th>
+                                            <th>Variación (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyComparativa"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                 <div class="graficos-section">
+    <!-- Selector de tipo de producción -->
+    <div class="selector-tipo-grafico" style="margin-bottom: 15px; display: flex; gap: 10px; justify-content: center;">
+        <button class="btn-tipo-grafico active" data-tipo="pan" onclick="cambiarTipoGrafico('pan')">
+            <i class="fas fa-bread-slice"></i> Panificación
+        </button>
+        <button class="btn-tipo-grafico" data-tipo="cereales" onclick="cambiarTipoGrafico('cereales')">
+            <i class="fas fa-seedling"></i> Cereales
+        </button>
+        <button class="btn-tipo-grafico" data-tipo="soya" onclick="cambiarTipoGrafico('soya')">
+            <i class="fas fa-leaf"></i> Soya
+        </button>
+    </div>
+
+    <div class="grafico-card">
+        <div class="grafico-header">
+            <i class="fas fa-chart-bar"></i>
+            <div>
+                <h4 id="grafico1-titulo">Comparativa por Producto</h4>
+                <p id="grafico1-subtitulo">Planificación vs Producción Real (Kg)</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="comparativaChart" style="width:100%; max-height: 280px;"></canvas>
+        </div>
+        <div class="stats-mini" id="stats-mini-pan">
+            <div class="stats-mini-item">
+                <div class="label">Planificación Total</div>
+                <div class="value" id="planificacion-total-kg">0 kg</div>
+            </div>
+            <div class="stats-mini-item">
+                <div class="label">Producción Total</div>
+                <div class="value" id="produccion-total-kg">0 kg</div>
+            </div>
+            <div class="stats-mini-item">
+                <div class="label">Diferencia</div>
+                <div class="value" id="diferencia-total">0 kg</div>
+            </div>
+        </div>
+        <!-- Stats para cereales (inicialmente ocultos) -->
+        <div class="stats-mini" id="stats-mini-cereales" style="display: none;">
+            <div class="stats-mini-item">
+                <div class="label">Total Producido</div>
+                <div class="value" id="cereales-total-kg">0 kg</div>
+            </div>
+            <div class="stats-mini-item">
+                <div class="label">Merma Total</div>
+                <div class="value" id="cereales-merma-kg">0 kg</div>
+            </div>
+            <div class="stats-mini-item">
+                <div class="label">Rendimiento Promedio</div>
+                <div class="value" id="cereales-rendimiento">0%</div>
+            </div>
+        </div>
+        <!-- Stats para soya (inicialmente ocultos) -->
+        <div class="stats-mini" id="stats-mini-soya" style="display: none;">
+            <div class="stats-mini-item">
+                <div class="label">Total Producido</div>
+                <div class="value" id="soya-total-kg">0 kg</div>
+            </div>
+            <div class="stats-mini-item">
+                <div class="label">Primera Calidad</div>
+                <div class="value" id="soya-primera-kg">0 kg</div>
+            </div>
+            <div class="stats-mini-item">
+                <div class="label">Rendimiento</div>
+                <div class="value" id="soya-rendimiento">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grafico-card">
+        <div class="grafico-header">
+            <i class="fas fa-chart-pie"></i>
+            <div>
+                <h4 id="grafico2-titulo">Rendimiento por Producto</h4>
+                <p id="grafico2-subtitulo">Porcentaje de eficiencia (%)</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="rendimientoChart" style="width:100%; max-height: 220px;"></canvas>
+        </div>
+        <div class="leyenda-rendimiento" id="leyenda-rendimiento"></div>
+        <div id="rendimiento-general" class="rendimiento-badge">
+            Rendimiento General: --%
+        </div>
+    </div>
+
+    <div class="grafico-card">
+        <div class="grafico-header">
+            <i class="fas fa-trash-alt"></i>
+            <div>
+                <h4 id="grafico3-titulo">Merma por Producto</h4>
+                <p id="grafico3-subtitulo">Pérdidas en kilogramos</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="mermaChart" style="width:100%; max-height: 220px;"></canvas>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="menu.js"></script>
+    <script src="Resumen.js"></script>
+</body>
+</html>

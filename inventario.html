@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario de Piezas - VENEPAN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+<div class="container">
+    <aside class="sidebar"></aside>
+
+   <main class="main-content">
+    <header class="top-bar">
+        <div class="page-info">
+            <h2>Inventario de Piezas y Repuestos</h2>
+            <span>Control de inventario de máquinas y mantenimiento</span>
+        </div>
+        <div class="top-icons">
+            <div class="menu-desplegable-container">
+                <i class="fas fa-bars menu-hamburguesa" id="menuHamburguesa" style="cursor: pointer;"></i>
+                <div class="menu-desplegable" id="menuDesplegable">
+                    <div class="menu-item" data-seccion="piezas"><i class="fas fa-cogs"></i><span>Gestión de Piezas</span></div>
+                    <div class="menu-item" data-seccion="movimientos"><i class="fas fa-exchange-alt"></i><span>Registrar Movimiento</span></div>
+                    <div class="menu-item" data-seccion="maquinas"><i class="fas fa-industry"></i><span>Gestión de Máquinas</span></div>
+                </div>
+            </div>
+            <i class="fas fa-search" id="lupa-busqueda" style="cursor: pointer;"></i>
+        </div>
+    </header>
+
+    <!-- STATS (siempre visibles) -->
+    <div class="stats-grid">
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-cogs"></i></div>
+            <div class="stat-data"><h3 id="total-piezas">0</h3><p>Total Piezas</p></div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-data"><h3 id="stock-bajo">0</h3><p>Stock Bajo</p></div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-industry"></i></div>
+            <div class="stat-data"><h3 id="total-maquinas">0</h3><p>Máquinas</p></div>
+        </div>
+    </div>
+
+    <!-- PESTAÑAS (estilo Resumen) -->
+    <div class="tabs-comparacion">
+        <button class="tab-btn active" id="tab-piezas-btn"><i class="fas fa-cogs"></i> Inventario de Piezas</button>
+        <button class="tab-btn" id="tab-maquinas-btn"><i class="fas fa-industry"></i> Máquinas de la Planta</button>
+        <button class="tab-btn" id="tab-movimientos-btn"><i class="fas fa-history"></i> Historial de Movimientos</button>
+    </div>
+
+    <!-- CONTENEDORES DE CADA TABLA -->
+    <div id="contenedor-piezas" class="tab-content active">
+        <div class="card tabla-producto">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3><i class="fas fa-cogs"></i> Inventario de Piezas</h3>
+                <button id="btn-nueva-pieza" class="btn-primary" style="padding: 8px 15px; width: auto;">
+                    <i class="fas fa-plus"></i> Nueva Pieza
+                </button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr><th>Código</th><th>Nombre</th><th>Máquina</th><th>Categoría</th><th>Stock</th><th>Min.</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="lista-piezas"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="contenedor-maquinas" class="tab-content" style="display: none;">
+        <div class="card tabla-producto">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3><i class="fas fa-industry"></i> Máquinas de la Planta</h3>
+                <button id="btn-nueva-maquina" class="btn-primary" style="padding: 8px 15px; width: auto;">
+                    <i class="fas fa-plus"></i> Nueva Máquina
+                </button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr><th>Nombre</th><th>Modelo</th><th>Marca</th><th>Ubicación</th><th>Estado</th><th>Responsable</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="lista-maquinas"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="contenedor-movimientos" class="tab-content" style="display: none;">
+        <div class="card tabla-producto">
+            <div class="card-header">
+                <h3><i class="fas fa-history"></i> Historial de Movimientos</h3>
+            </div>
+            <div style="overflow-x: auto; max-height: 500px;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr><th>Fecha</th><th>Pieza</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th><th>Usuario</th></tr>
+                    </thead>
+                    <tbody id="lista-movimientos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</div>
+
+<!-- MODAL PIEZAS -->
+<div id="modal-pieza" class="form-contenedor">
+    <div class="form-header">
+        <h2 id="modal-pieza-titulo"><i class="fas fa-cogs"></i> Nueva Pieza</h2>
+        <button class="btn-cerrar-form cerrar-modal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-body">
+        <div class="grid-form">
+            <div class="input-group"><label>Código *</label><input type="text" id="pieza-codigo"></div>
+            <div class="input-group"><label>Nombre *</label><input type="text" id="pieza-nombre"></div>
+            <div class="input-group"><label>Máquina Asociada *</label>
+                <select id="pieza-maquina"><option value="">Seleccionar máquina</option></select>
+            </div>
+            <div class="input-group"><label>Categoría</label><input type="text" id="pieza-categoria"></div>
+            <div class="input-group"><label>Stock Actual</label><input type="number" id="pieza-stock" value="0"></div>
+            <div class="input-group"><label>Stock Mínimo</label><input type="number" id="pieza-stock-minimo" value="5"></div>
+            <div class="input-group"><label>Ubicación</label><input type="text" id="pieza-ubicacion"></div>
+            <div class="input-group"><label>Proveedor</label><input type="text" id="pieza-proveedor"></div>
+            <div class="input-group"><label>Precio Compra</label><input type="number" id="pieza-precio" step="0.01"></div>
+            <div class="input-group"><label>Estado</label>
+                <select id="pieza-estado">
+                    <option value="Operativa">Operativa</option>
+                    <option value="En mantenimiento">En mantenimiento</option>
+                    <option value="Defectuosa">Defectuosa</option>
+                    <option value="Agotada">Agotada</option>
+                </select>
+            </div>
+            <div class="input-group" style="grid-column:span 2;"><label>Observaciones</label><textarea id="pieza-obs" rows="2"></textarea></div>
+        </div>
+        <button id="btn-guardar-pieza" class="btn-primary"><i class="fas fa-save"></i> GUARDAR</button>
+    </div>
+</div>
+
+<!-- MODAL MÁQUINAS -->
+<div id="modal-maquina" class="form-contenedor">
+    <div class="form-header">
+        <h2 id="modal-maquina-titulo"><i class="fas fa-industry"></i> Nueva Máquina</h2>
+        <button class="btn-cerrar-form cerrar-modal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-body">
+        <div class="grid-form">
+            <div class="input-group"><label>Nombre *</label><input type="text" id="maquina-nombre"></div>
+            <div class="input-group"><label>Modelo</label><input type="text" id="maquina-modelo"></div>
+            <div class="input-group"><label>Marca</label><input type="text" id="maquina-marca"></div>
+            <div class="input-group"><label>Ubicación</label><input type="text" id="maquina-ubicacion"></div>
+            <div class="input-group"><label>Estado</label>
+                <select id="maquina-estado">
+                    <option value="Operativa">Operativa</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Parada">Parada</option>
+                    <option value="En reparacion">En reparación</option>
+                </select>
+            </div>
+            <div class="input-group"><label>Fecha Instalación</label><input type="date" id="maquina-fecha-inst"></div>
+            <div class="input-group"><label>Último Mantenimiento</label><input type="date" id="maquina-ultimo-mant"></div>
+            <div class="input-group"><label>Responsable</label><input type="text" id="maquina-responsable"></div>
+            <div class="input-group" style="grid-column:span 2;"><label>Observaciones</label><textarea id="maquina-obs" rows="2"></textarea></div>
+        </div>
+        <button id="btn-guardar-maquina" class="btn-primary"><i class="fas fa-save"></i> GUARDAR</button>
+    </div>
+</div>
+
+<!-- MODAL MOVIMIENTO -->
+<div id="modal-movimiento" class="form-contenedor">
+    <div class="form-header">
+        <h2><i class="fas fa-exchange-alt"></i> Registrar Movimiento</h2>
+        <button class="btn-cerrar-form cerrar-modal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-body">
+        <div class="grid-form">
+            <div class="input-group" style="grid-column:span 2;"><label>Pieza *</label>
+                <select id="mov-pieza"><option value="">Seleccionar pieza</option></select>
+            </div>
+            <div class="input-group"><label>Tipo *</label>
+                <select id="mov-tipo">
+                    <option value="ENTRADA">ENTRADA (Compra/Devolución)</option>
+                    <option value="SALIDA">SALIDA (Uso/Mantenimiento)</option>
+                    <option value="AJUSTE">AJUSTE (Inventario)</option>
+                </select>
+            </div>
+            <div class="input-group"><label>Cantidad *</label><input type="number" id="mov-cantidad" min="1"></div>
+            <div class="input-group" style="grid-column:span 2;"><label>Motivo</label><textarea id="mov-motivo" rows="2" placeholder="Ej: Mantenimiento preventivo, Compra a proveedor..."></textarea></div>
+        </div>
+        <button id="btn-guardar-movimiento" class="btn-primary"><i class="fas fa-save"></i> REGISTRAR MOVIMIENTO</button>
+    </div>
+</div>
+
+<!-- OVERLAY -->
+<div id="form-overlay" class="form-overlay"></div>
+
+<script src="menu.js"></script>
+<script src="inventario.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Soya - VENEPAN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar"></aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="page-info">
+                <h2>Panel de Control de Soya</h2>
+                <span>Gestión de Producción y Despacho</span>
+            </div>
+            <div class="top-icons">
+                <div class="menu-desplegable-container">
+                    <i class="fas fa-bars menu-hamburguesa" id="menuHamburguesa" style="cursor: pointer;"></i>
+                    <div class="menu-desplegable" id="menuDesplegable">
+                        <div class="menu-item" data-seccion="produccion">
+                            <i class="fas fa-industry"></i>
+                            <span>Registro de Producción</span>
+                        </div>
+                        <div class="menu-item" data-seccion="despacho">
+                            <i class="fas fa-truck-loading"></i>
+                            <span>Entrega a Despacho</span>
+                        </div>
+                    </div>
+                </div>
+                <i class="fas fa-search" id="lupa-busqueda" style="cursor: pointer;"></i>
+            </div>
+        </header>
+
+        <!-- ========== TARJETAS DE ESTADÍSTICAS (ROJAS) ========== -->
+        <div class="stats-grid" id="soya-stats">
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-produccion-soya-mes">0</h3>
+                    <p>Producción del Mes (kg)</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-percent"></i></div>
+                <div class="stat-data">
+                    <h3 id="rendimiento-promedio-soya">0%</h3>
+                    <p>Rendimiento Promedio (1ra calidad)</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-lotes-soya">0</h3>
+                    <p>Lotes Producidos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón flotante para nuevo registro -->
+        <button id="btn-abrir-form-soya" class="btn-flotante" title="Nuevo registro">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <!-- Pestañas -->
+        <div class="tabs-comparacion">
+            <button class="tab-btn active" id="tab-produccion-soya-btn">
+                <i class="fas fa-industry"></i> Producción
+            </button>
+            <button class="tab-btn" id="tab-despacho-soya-btn">
+                <i class="fas fa-truck-loading"></i> Despacho
+            </button>
+        </div>
+
+        <!-- Contenedor de producción (se llena con JS) -->
+        <div id="contenedor-produccion-soya" class="tab-content active" style="display: block;"></div>
+
+        <!-- Contenedor de despacho -->
+        <div id="contenedor-despacho-soya" class="tab-content" style="display: none;">
+            <div class="card tabla-producto">
+                <div class="card-header">
+                    <h3><i class="fas fa-clipboard-list"></i> Historial Despacho</h3>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead style="background:#fdf5d0;">
+                            <tr>
+                                <th>Lote</th>
+                                <th>Presentaciones</th>
+                                <th>Total Kg</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-soya-despacho"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULARIO PRODUCCIÓN -->
+        <div id="form-contenedor-produccion" class="form-contenedor">
+            <div class="form-header">
+                <h2><i class="fas fa-industry"></i> Registro de Producción</h2>
+                <button id="btn-cerrar-produccion" class="btn-cerrar-form"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-body">
+                <div class="grid-form">
+                    <div class="input-group"><label class="campo-obligatorio">Fecha</label><input type="date" id="soya-fecha"></div>
+                    <div class="input-group"><label class="campo-obligatorio">Lote</label><input type="text" id="soya-lote"></div>
+                    <div class="input-group"><label>Tipo Producto</label><select id="soya-tipo-producto"><option value="12">Soya Estándar</option><option value="13">Soya Proteica</option></select></div>
+                    <div class="input-group"><label>Medidas (unidades)</label><input type="number" id="soya-medidas" class="campo-numerico"></div>
+                    <div class="input-group"><label>Soya Desgranada (kg)</label><input type="number" id="soya-desgranada" step="0.01" class="campo-numerico"></div>
+                    <div class="input-group"><label>Azufre (kg)</label><input type="number" id="soya-azufre" step="0.01" class="campo-numerico"></div>
+                    <div class="input-group"><label>Humedad (%)</label><input type="number" id="soya-humedad" step="0.01" class="campo-numerico"></div>
+                    <div class="input-group"><label>Producción 1ra (kg)</label><input type="number" id="soya-primera" step="0.01" class="calculo-produccion campo-numerico"></div>
+                    <div class="input-group"><label>Desecho Húmedo (kg)</label><input type="number" id="soya-desecho-h" step="0.01" class="calculo-produccion campo-numerico"></div>
+                    <div class="input-group"><label>Desecho Seco (kg)</label><input type="number" id="soya-desecho-s" step="0.01" class="calculo-produccion campo-numerico"></div>
+                    <div class="input-group"><label>Total Producido (kg)</label><input type="number" id="soya-total" step="0.01" readonly class="readonly-input"></div>
+                    <div class="input-group"><label>Solo 1ra (kg)</label><input type="number" id="soya-total-sin" step="0.01" readonly class="readonly-input"></div>
+                    <div class="input-group"><label>Proveedor</label><input type="text" id="soya-proveedor"></div>
+                </div>
+                <button id="btn-guardar-produccion" class="btn-primary"><i class="fas fa-save"></i> GUARDAR REGISTRO</button>
+            </div>
+        </div>
+
+        <!-- FORMULARIO DESPACHO -->
+        <div id="form-contenedor-despacho" class="form-contenedor">
+            <div class="form-header">
+                <h2><i class="fas fa-truck-loading"></i> Registro de Despacho</h2>
+                <button id="btn-cerrar-despacho" class="btn-cerrar-form"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-body">
+                <div class="grid-form">
+                    <div class="input-group"><label class="campo-obligatorio">Fecha</label><input type="date" id="soya-fecha-despacho"></div>
+                    <div class="input-group"><label class="campo-obligatorio">Lote</label><input type="text" id="despacho-lote"></div>
+                    <div class="input-group"><label>Unidades 125g</label><input type="number" id="soya-125g" class="calculo-despacho campo-numerico"></div>
+                    <div class="input-group"><label>Unidades 250g</label><input type="number" id="soya-250g" class="calculo-despacho campo-numerico"></div>
+                    <div class="input-group"><label>Bultos 8kg</label><input type="number" id="soya-8kg" class="calculo-despacho campo-numerico"></div>
+                    <div class="input-group"><label>Bultos 12kg</label><input type="number" id="soya-12kg" class="calculo-despacho campo-numerico"></div>
+                    <div class="input-group"><label>Total Kg</label><input type="number" id="soya-kg-despacho" step="0.01" readonly class="readonly-input"></div>
+                </div>
+                <button id="btn-guardar-despacho" class="btn-primary"><i class="fas fa-shipping-fast"></i> REGISTRAR ENTREGA</button>
+            </div>
+        </div>
+
+        <!-- Overlay para oscurecer fondo -->
+        <div id="form-overlay-soya" class="form-overlay"></div>
+
+        <!-- Modal de búsqueda -->
+        <div id="modal-busqueda-soya" class="expediente-modal" style="display: none;">
+            <div class="expediente-contenido" style="max-width: 400px;">
+                <div class="expediente-header">
+                    <h2><i class="fas fa-search"></i> Buscar por Período</h2>
+                    <button class="cerrar-expediente" onclick="cerrarModalBusquedaSoya()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="expediente-body">
+                    <div class="grid-form" style="grid-template-columns: 1fr 1fr;">
+                        <div class="input-group"><label>Mes</label><select id="buscar-mes-soya"></select></div>
+                        <div class="input-group"><label>Año</label><select id="buscar-anio-soya"></select></div>
+                    </div>
+                </div>
+                <div class="expediente-footer">
+                    <button class="btn-cerrar" onclick="cerrarModalBusquedaSoya()">Cancelar</button>
+                    <button class="btn-imprimir" onclick="buscarPorMesAnioSoya()">Buscar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para expandir tabla -->
+        <div id="modal-tabla-soya" class="expediente-modal" style="display: none;">
+            <div class="expediente-contenido" style="max-width: 1200px;">
+                <div class="expediente-header">
+                    <h2><i class="fas fa-chart-bar"></i> Vista Expandida</h2>
+                    <button class="cerrar-expediente" onclick="cerrarModalTablaSoya()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="expediente-body" id="contenido-modal-tabla-soya"></div>
+                <div class="expediente-footer">
+                    <button class="btn-cerrar" onclick="cerrarModalTablaSoya()">Cerrar</button>
+                    <button class="btn-imprimir" onclick="window.print()">Imprimir</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="menu.js"></script>
+<script src="soya.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cereales - VENEPAN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar"></aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="page-info">
+                <h2>Panel de Cereales</h2>
+                <span>Control de Producción y Despacho</span>
+            </div>
+            <div class="top-icons">
+                <div class="menu-desplegable-container">
+                    <i class="fas fa-bars menu-hamburguesa" id="menuHamburguesa" style="cursor: pointer;"></i>
+                    <div class="menu-desplegable" id="menuDesplegable">
+                        <div class="menu-item" data-seccion="produccion">
+                            <i class="fas fa-industry"></i>
+                            <span>Registro Producción</span>
+                        </div>
+                        <div class="menu-item" data-seccion="despacho">
+                            <i class="fas fa-truck-loading"></i>
+                            <span>Entrega a Despacho</span>
+                        </div>
+                    </div>
+                </div>
+                <i class="fas fa-search" id="lupa-busqueda" style="cursor: pointer;"></i>
+            </div>
+        </header>
+
+        <!-- Tarjetas de estadísticas (rojas) -->
+        <div class="stats-grid" id="cereales-stats">
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-produccion-mes">0</h3>
+                    <p>Producción del Mes (kg)</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-percent"></i></div>
+                <div class="stat-data">
+                    <h3 id="rendimiento-promedio-pan">0%</h3>
+                    <p>Rendimiento Promedio</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-bread-slice"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-panes-producidos">0</h3>
+                    <p>Unidades Producidas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑAS (estilo Resumen) -->
+        <div class="tabs-comparacion">
+            <button class="tab-btn active" id="tab-produccion-btn">
+                <i class="fas fa-industry"></i> Producción
+            </button>
+            <button class="tab-btn" id="tab-despacho-btn">
+                <i class="fas fa-truck-loading"></i> Entrega a Despacho
+            </button>
+        </div>
+
+        <!-- Contenedor de tablas (se muestra uno u otro) -->
+        <div id="contenedor-produccion" class="tab-content active">
+            <div class="card tabla-producto">
+                <div class="card-header">
+                    <h3><i class="fas fa-history"></i> Historial Producción (todos los campos)</h3>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="tabla-prod-cereales" style="width:100%; font-size:12px;">
+                        <thead id="thead-produccion"></thead>
+                        <tbody id="historial-produccion-cereales"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="contenedor-despacho" class="tab-content" style="display: none;">
+            <div class="card tabla-producto">
+                <div class="card-header">
+                    <h3><i class="fas fa-clipboard-check"></i> Historial Despacho (todos los campos)</h3>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="tabla-desp-cereales" style="width:100%; font-size:12px;">
+                        <thead id="thead-despacho"></thead>
+                        <tbody id="historial-despacho-cereales"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODALES (formularios y búsqueda) -->
+        <div id="form-overlay" class="form-overlay"></div>
+        <div id="form-contenedor" class="form-contenedor">
+            <div class="form-header">
+                <h2 id="titulo-formulario"><i class="fas fa-industry"></i> Registro de Producción</h2>
+                <button id="btn-cerrar-form" class="btn-cerrar-form"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-body" id="form-body-cereales"></div>
+        </div>
+
+        <div id="modal-busqueda-cereales" class="expediente-modal" style="display: none;">
+            <div class="expediente-contenido" style="max-width: 400px;">
+                <div class="expediente-header">
+                    <h2><i class="fas fa-search"></i> Buscar por Período</h2>
+                    <button class="cerrar-expediente" onclick="cerrarModalBusquedaCereales()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="expediente-body">
+                    <div class="grid-form" style="grid-template-columns: 1fr 1fr;">
+                        <div class="input-group">
+                            <label>Mes</label>
+                            <select id="buscar-mes-cereales"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>Año</label>
+                            <select id="buscar-anio-cereales"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="expediente-footer">
+                    <button class="btn-cerrar" onclick="cerrarModalBusquedaCereales()">Cancelar</button>
+                    <button class="btn-imprimir" onclick="buscarPorMesAnioCereales()">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<div id="modal-tabla" class="expediente-modal" style="display: none;">
+    <div class="expediente-contenido" style="max-width: 1200px;">
+        <div class="expediente-header">
+            <h2><i class="fas fa-chart-bar"></i> Vista Expandida</h2>
+            <button class="cerrar-expediente" onclick="cerrarModalTabla()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="expediente-body" id="contenido-modal-tabla"></div>
+        <div class="expediente-footer">
+            <button class="btn-cerrar" onclick="cerrarModalTabla()">Cerrar</button>
+            <button class="btn-imprimir" onclick="window.print()">Imprimir</button>
+        </div>
+    </div>
+</div>
+
+<script src="menu.js"></script>
+<script src="cereales.js"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panificacion - VENEPAN</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+<aside class="sidebar"></aside>
+
+   <main class="main-content">
+    <header class="top-bar">
+        <div class="page-info">
+            <h2>Panel de Panificación y Control</h2>
+            <span>Registro de producción de pan</span>
+        </div>
+        
+        <!-- ===== MENÚ HAMBURGUESA ===== -->
+        <div class="top-icons">
+            <div class="menu-desplegable-container">
+                <i class="fas fa-bars menu-hamburguesa" id="menuHamburguesa" style="cursor: pointer;"></i>
+                
+                <!-- Menú desplegable -->
+                <div class="menu-desplegable" id="menuDesplegable">
+                    <div class="menu-item" data-seccion="produccion">
+                        <i class="fas fa-industry"></i>
+                        <span>Registro de Producción</span>
+                    </div>
+                </div>
+            </div>
+            <i class="fas fa-search"></i>
+        </div>
+    </header>
+
+      <div class="stats-grid" id="pan-stats">
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-bread-slice"></i></div>
+            <div class="stat-data">
+                <h3 id="total-tipos-pan">0</h3>
+                <p>Tipos de pan ingresados</p>
+            </div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-weight-hanging"></i></div>
+            <div class="stat-data">
+                <h3 id="total-kilos-mes">0</h3>
+                <p>Kilos totales del mes</p>
+            </div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-data">
+                <h3 id="promedio-kg-tipo">0</h3>
+                <p>Promedio kg por tipo</p>
+            </div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+            <div class="stat-data">
+                <h3 id="top-pan">—</h3>
+                <p>Pan más producido (kg)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BOTÓN FLOTANTE PARA ABRIR FORMULARIO ===== -->
+    <button id="btn-abrir-form-pan" class="btn-flotante" title="Nuevo registro de producción">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- ===== OVERLAY ===== -->
+    <div id="form-overlay-pan" class="form-overlay"></div>
+
+    <!-- ===== FORMULARIO MODAL ===== -->
+    <div id="form-contenedor-pan" class="form-contenedor">
+        <div class="form-header">
+            <h2>
+                <i class="fas fa-edit"></i>
+                Nuevo Registro de Producción
+            </h2>
+            <button id="btn-cerrar-form-pan" class="btn-cerrar-form">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="form-body">
+            <div class="grid-form">
+                <div class="input-group">
+                    <label class="campo-obligatorio">Tipo de pan</label>
+                    <select id="tipo-pan">
+                        <option value="">Seleccione un pan</option>
+                        <option value="integral">Pan Integral</option>
+                        <option value="ajonjoli">Pan c/ Ajonjolí</option>
+                        <option value="blanco">Pan Blanco</option>
+                        <option value="miel">Pan Miel</option>
+                        <option value="hamburguesa">Pan Hamburguesa</option>
+                        <option value="perrocaliente">Pan Perro Caliente</option>
+                        <option value="tostadas">Tostadas</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label class="campo-obligatorio">Fecha</label>
+                    <input type="date" id="fecha-manual">
+                </div>
+                
+                <div class="input-group">
+                    <label class="campo-obligatorio">Medida (kg)</label>
+                    <input type="number" id="medida" placeholder="0.00" step="0.01">
+                </div>
+                
+                <div class="input-group">
+                    <label>Paquetes</label>
+                    <input type="number" id="paquetes" placeholder="Cant.">
+                </div>
+                
+                <div class="input-group">
+                    <label>Unidades</label>
+                    <input type="number" id="unidades" placeholder="Cant.">
+                </div>
+                
+                <div class="input-group">
+                    <label>Merma (BD)</label>
+                    <input type="number" id="bd" placeholder="Cant.">
+                </div>
+                
+                <div class="input-group">
+                    <label>Rendimiento </label>
+                    <input type="number" id="rendimiento" readonly class="readonly-input">
+                </div>
+            </div>
+            
+            <button id="btn-guardar-pan" class="btn-primary">
+                <i class="fas fa-save"></i> GUARDAR REGISTRO
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== MODAL DE BÚSQUEDA POR MES/AÑO ===== -->
+    <div id="modal-busqueda-pan" class="expediente-modal" style="display: none;">
+        <div class="expediente-contenido" style="max-width: 400px;">
+            <div class="expediente-header">
+                <h2>
+                    <i class="fas fa-search"></i>
+                    Buscar por Período
+                </h2>
+                <button class="cerrar-expediente" onclick="cerrarModalBusqueda()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="expediente-body">
+                <div class="grid-form" style="grid-template-columns: 1fr 1fr;">
+                    <div class="input-group">
+                        <label>Mes</label>
+                        <select id="buscar-mes">
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Año</label>
+                        <select id="buscar-anio">
+                            <!-- Se llenará con JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expediente-footer">
+                <button class="btn-cerrar" onclick="cerrarModalBusqueda()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-imprimir" onclick="buscarPorMesAnio()">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="tablas-abajo" class="tables-container"></div>
+</main>
+    </div>
+
+<div id="modal-tabla" class="expediente-modal" style="display: none;">
+    <div class="expediente-contenido" style="max-width: 1200px;">
+        <div class="expediente-header">
+            <h2>
+                <i class="fas fa-chart-bar"></i>
+                Vista Detallada de Producción
+            </h2>
+            <button class="cerrar-expediente" onclick="cerrarModalTabla()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="expediente-body" style="max-height: 70vh; overflow-y: auto;">
+            <div id="contenido-modal-tabla"></div>
+        </div>
+
+        <div class="expediente-footer">
+            <button class="btn-cerrar" onclick="cerrarModalTabla()">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+            <button class="btn-imprimir" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir Reporte
+            </button>
+        </div>
+    </div>
+</div>
+
+ <script src="menu.js"></script>
+<script src="panificacion.js"></script>
+</body>
+</html>

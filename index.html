@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - VENEPAN</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar"></aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="page-info">
+                <h2>Panel de Control Principal</h2>
+                <span>Resumen ejecutivo de producción, inventario y personal</span>
+            </div>
+            <div class="top-icons">
+                <i class="fas fa-chart-line"></i>
+                <i class="fas fa-calendar-alt" id="fecha-actual-icon"></i>
+            </div>
+        </header>
+
+        <!-- Tarjetas de estadísticas (rojas) -->
+        <div class="stats-grid">
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-produccion-mes">0</h3>
+                    <p>Producción del mes (kg)</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-empleados">0</h3>
+                    <p>Personal activo</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-data">
+                    <h3 id="stock-bajo">0</h3>
+                    <p>Insumos con stock bajo</p>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-boxes"></i></div>
+                <div class="stat-data">
+                    <h3 id="total-productos">0</h3>
+                    <p>Productos activos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de dos columnas: actividad reciente + alertas -->
+        <div class="dashboard-layout" style="display: flex; gap: 25px; flex-wrap: wrap; margin-bottom: 30px;">
+            <!-- Columna izquierda: Producción reciente -->
+            <div style="flex: 2; min-width: 280px;">
+                <div class="card tabla-producto">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Últimos registros de producción</h3>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr><th>Fecha</th><th>Producto / Lote</th><th>Cantidad</th><th>Módulo</th></tr>
+                            </thead>
+                            <tbody id="tabla-actividad-reciente">
+                                <tr><td colspan="4" style="text-align:center; padding:30px;">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Gráfico de tendencia (últimos 7 días - panadería) -->
+                <div class="card" style="margin-top: 25px;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> Tendencia de producción (panadería)</h3>
+                    </div>
+                    <canvas id="tendenciaChart" width="400" height="200" style="max-height: 220px; width:100%"></canvas>
+                </div>
+            </div>
+
+            <!-- Columna derecha: Alertas de stock bajo y condiciones médicas -->
+            <div style="flex: 1.2; min-width: 260px;">
+                <div class="card tabla-producto">
+                    <div class="card-header">
+                        <h3><i class="fas fa-box-open"></i> Materia prima con bajo stock</h3>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%;">
+                            <tbody id="lista-bajo-stock">
+                                <tr><td style="text-align:center; padding:20px;">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card tabla-producto" style="margin-top: 25px;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-heartbeat"></i> Alertas médicas del personal</h3>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%;">
+                            <tbody id="lista-alertas-medicas">
+                                <tr><td style="text-align:center; padding:20px;">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 25px; background: #fffbe6;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Resumen rápido del mes</h3>
+                    </div>
+                    <div style="padding: 10px;">
+                        <p><i class="fas fa-bread-slice"></i> Panadería: <strong id="res-pan-count">0</strong> registros</p>
+                        <p><i class="fas fa-seedling"></i> Cereales: <strong id="res-cereal-count">0</strong> registros</p>
+                        <p><i class="fas fa-leaf"></i> Soya: <strong id="res-soya-count">0</strong> registros</p>
+                        <hr style="border-color:#e6dbac;">
+                        <button onclick="location.href='Resumen.html'" class="btn-primary" style="width:100%;">Ver resumen completo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="menu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Control de Empaques - VENEPAN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+<div class="container">
+<aside class="sidebar"></aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="page-info">
+                <h2>Control de Producción y Empaque</h2>
+                <span>Registro de material utilizado y control de desperdicio</span>
+            </div>
+        </header>
+
+        <section class="card-section">
+
+            <!-- ================= REGISTRO ================= -->
+            <div class="card card-empaques">
+                <div class="card-header">
+                    <h3><i class="fas fa-folder-plus"></i> Registrar Uso de Material</h3>
+                </div>
+
+                <div class="grid-form">
+                                        
+                    <div class="input-group">
+                        <label class="campo-obligatorio">Fecha de Registro</label>
+                        <input type="date" id="empaque-fecha" class="campo-obligatorio">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Producto</label>
+                        <select id="empaque-producto">
+                            <option value="">Seleccione un producto...</option>
+                            <option value="CHOCO BOLITAS">CHOCO BOLITAS</option>
+                            <option value="CHOKO CHISPYS">CHOKO CHISPYS</option>
+                            <option value="AROS FRUTADOS">AROS FRUTADOS</option>
+                            <option value="AROS MIEL">AROS MIEL</option>
+                            <option value="PAN INTEGRAL">PAN INTEGRAL</option>
+                            <option value="PAN C/A">PAN C/A</option>
+                            <option value="PAN BLANCO">PAN BLANCO</option>
+                            <option value="PAN MIEL">PAN MIEL</option>
+                            <option value="TOSTADAS">TOSTADAS</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Material Entregado</label>
+                        <input type="number" id="empaque-entregado" placeholder="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Material Dañado</label>
+                        <input type="number" id="empaque-danado" placeholder="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Porcentaje (%)</label>
+                        <input type="number" id="empaque-porcentaje" placeholder="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Unidades Producidas</label>
+                        <input type="number" id="empaque-unidades" placeholder="0">
+                    </div>
+                    
+                     <div class="input-group" style="grid-column: span 2;">
+                        <label>Observaciones</label>
+                        <textarea id="empaque-observaciones" rows="2" placeholder="Notas adicionales..."></textarea>
+                    </div>
+
+                </div>
+
+                <button id="btn-guardar-empaque" class="btn-primary">
+                    <i class="fas fa-save"></i> GUARDAR REGISTRO
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ================= RESUMEN ================= -->
+        <div class="tables-container">
+
+            <div class="card tabla-producto">
+                <div class="card-header">
+                    <h3><i class="fas fa-clipboard-list"></i> Resumen de Empaques</h3>
+                </div>
+
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Mat. Entregado</th>
+                                <th>Mat. Dañado</th>
+                                <th>%</th>
+                                <th>Unidades</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-empaques"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<script src="menu.js"></script>
+<script src="empaques.js"></script>
+</body>
+</html>
